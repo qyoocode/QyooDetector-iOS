@@ -8,12 +8,14 @@
 #ifndef QyooDetector_h
 #define QyooDetector_h
 
-#import "CannyDetector.h"
-#import "Convolution.h"
-#import "Feature.h"
-#import "FeatureDetector.h"
-#import "Geometry.h"
-#import "qyooModel.h"
-#import "RawImage.h"
+#import <Detector/FeatureProcessorWrapper.h>
+
+//#import "CannyDetector.h"
+//#import "Convolution.h"
+//#import "Feature.h"
+//#import "FeatureDetector.h"
+//#import "Geometry.h"
+//#import "qyooModel.h"
+//#import "RawImage.h"
 
 #endif /* QyooDetector_h */

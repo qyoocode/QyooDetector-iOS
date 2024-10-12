@@ -26,14 +26,14 @@ Alternatively, you can add the package directly to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yourusername/QyooDetector.git", from: "1.0.0")
+    .package(url: "https://github.com/qyoocode/QyooDetector-iOS", from: "1.0.0")
 ]
 ```
 
 ## Package Structure
 
 The package is divided into two main components:
-- **QyooLib**: Contains the Objective-C++ image processing code, which performs the core image manipulation functions.
+- **Detector**: Contains the Objective-C++ image processing code, which performs the core image manipulation functions.
 - **QyooDetector**: Swift-based interface that exposes the image processing functionality for use in Swift projects.
 
 ### Key Classes and Methods
@@ -84,7 +84,7 @@ This class handles 32-bit grayscale image data.
 Here’s an example of how you can use the package in a Swift-based iOS/macOS project:
 
 ```swift
-import QyooLib
+import Detector
 
 class ImageProcessor {
     func processImage(_ image: UIImage) -> UIImage? {
