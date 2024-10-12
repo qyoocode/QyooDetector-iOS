@@ -8,17 +8,6 @@ QyooDetector is a Swift package that provides image processing capabilities, par
 - Conversion of `UIImage` objects to grayscale and feature detection.
 - Image contrast scaling for enhancing image clarity.
 - Ability to create indexed images using custom color masks.
-- Legacy support for server-side C++ image processing using `QYOO_CMD` mode.
-
-## Legacy `QYOO_CMD` Mode
-
-The package includes legacy C++ code that was originally used for server-side processing of images on Linux systems. This mode, activated by the `QYOO_CMD` preprocessor directive, is no longer actively maintained but remains part of the codebase for backward compatibility.
-
-When `QYOO_CMD` is defined, the package relies on the **GD** and **CML** libraries for server-side image processing, including:
-- Saving and flipping images in the GD image format (`gdImagePtr`).
-- Matrix transformations using CML (`cml::matrix`).
-
-This code was used to perform server-side processing of image data on a Linux server but has since been replaced by more modern approaches using Swift and UIKit for iOS/macOS applications.
 
 ## Installation
 
@@ -90,25 +79,6 @@ This class handles 32-bit grayscale image data.
   UIImage *outputImage = [image makeImageWithZeroAlpha:NO];
   ```
 
-## Legacy `QYOO_CMD` Mode
-
-When building the package for use in a Linux or server-side environment, you can define `QYOO_CMD` to use the original C++ image processing code. This mode relies on the **GD** and **CML** libraries and is primarily intended for legacy use cases where server-side image processing is required.
-
-### Key Methods in `QYOO_CMD` Mode:
-- **GD Image Manipulation**:
-  ```cpp
-  gdImagePtr image = gdCreateImage(sizeX, sizeY);
-  RawImageGray8.copyFromGDImage(image);
-  ```
-
-- **Matrix Transformations** (for scaling or rotating images):
-  ```cpp
-  QyooMatrix mat;
-  RawImageGray8.copyFromGDImage(image, mat);
-  ```
-
-> **Note:** This mode is no longer actively maintained and is only kept for backward compatibility with older systems.
-
 ## Usage
 
 Here’s an example of how you can use the package in a Swift-based iOS/macOS project:
@@ -133,13 +103,3 @@ We welcome contributions to improve the QyooDetector package. If you would like 
 ## License
 
 This project is licensed under the **BSD-3 Clause License**. See the `LICENSE` file for details.
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Cannot find 'RawImageGray8' in scope**:
-   Ensure that the `QyooLib` target is correctly added as a dependency in your Swift Package, and make sure the public headers are exposed.
-
-2. **Undefined symbols when using `QYOO_CMD`**:
-   Make sure the **GD** and **CML** libraries are installed on your Linux system if you're using the package in server-side mode.

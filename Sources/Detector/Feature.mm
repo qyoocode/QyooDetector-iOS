@@ -12,25 +12,23 @@
 #import "Feature.h"
 #import "CannyDetector.h"
 
-#ifndef QYOO_CMD
 @implementation FeatureSet
 
 -(id)init
 {
-	if (self = [super init])
-	{
-	}
-	
-	return self;
+    if (self = [super init])
+    {
+    }
+    
+    return self;
 }
 
 -(void)dealloc
-{	
-	//[super dealloc];
+{
+    //[super dealloc];
 }
 
 @end
-#endif
 
 // Tack a point on the end
 void Feature::addPointEnd(int cx,int cy)
@@ -367,37 +365,15 @@ void Feature::refineCornerAndFindAngles(int searchDist2)
 			{
 				float scaleX = sqrtf(dist1), scaleY = sqrtf(dist0);
 
-#ifdef QYOO_CMD
-				QyooMatrix sheerMat(1.0, sheer, 0.0,
-						    0.0, 1.0, 0.0,
-						    0.0, 0.0, 1.0);
-				QyooMatrix transMat(1.0, 0.0, cornX,
-						    0.0, 1.0, cornY,
-						    0.0, 0.0, 1.0);
-				double angle = ang0 * M_PI / 180.0;
-				QyooMatrix rotMat(cos(angle), -sin(angle), 0.0,
-						  sin(angle), cos(angle), 0.0,
-						  0.0, 0.0, 1.0);
-				QyooMatrix scaleMat(scaleX, 0.0, 0.0,
-						    0.0, scaleY, 0.0,
-						    0.0, 0.0, 1.0);
+                CGAffineTransform sheerMat = CGAffineTransformMake(1.0,0.0, sheer ,1.0,0.0,0.0);
 
-				mat = transMat;
-				mat = mat * rotMat;
-				mat = mat * scaleMat;
-                                mat = mat * sheerMat;
-#else
-
-				CGAffineTransform sheerMat = CGAffineTransformMake(1.0,0.0, sheer ,1.0,0.0,0.0);
-
-				CGAffineTransform transMat = CGAffineTransformMakeTranslation(cornX, cornY);
-				CGAffineTransform rotMat = CGAffineTransformMakeRotation(ang0 * M_PI / 180.0);
-				CGAffineTransform scaleMat = CGAffineTransformMakeScale(scaleX, scaleY);
-				mat = transMat;
-				mat = CGAffineTransformConcat(rotMat, mat);
-				mat = CGAffineTransformConcat(scaleMat, mat);
-				mat = CGAffineTransformConcat(sheerMat, mat);
-#endif
+                CGAffineTransform transMat = CGAffineTransformMakeTranslation(cornX, cornY);
+                CGAffineTransform rotMat = CGAffineTransformMakeRotation(ang0 * M_PI / 180.0);
+                CGAffineTransform scaleMat = CGAffineTransformMakeScale(scaleX, scaleY);
+                mat = transMat;
+                mat = CGAffineTransformConcat(rotMat, mat);
+                mat = CGAffineTransformConcat(scaleMat, mat);
+                mat = CGAffineTransformConcat(sheerMat, mat);
 				
 			}
 		}
@@ -409,13 +385,8 @@ void Feature::refineCornerAndFindAngles(int searchDist2)
 // Check a single point against the ideal model
 bool Feature::pointModelCheck(QyooMatrix *invTrans,float imgX,float imgY,float nearDist2)
 {
-#ifdef QYOO_CMD
-        cml::vector3d pt = (*invTrans) * cml::vector3d(imgX,imgY,1.0);
-  	SimplePoint2D pt2d(pt[0],pt[1]);
-#else
-	CGPoint pt = CGPointApplyAffineTransform(CGPointMake(imgX,imgY), *invTrans);
-	SimplePoint2D pt2d(pt.x,pt.y);
-#endif
+    CGPoint pt = CGPointApplyAffineTransform(CGPointMake(imgX,imgY), *invTrans);
+    SimplePoint2D pt2d(pt.x,pt.y);
 	
 	// Is it close to the bottom line
 	SimpleLineSegment bline(SimplePoint2D(0.0,0.0),SimplePoint2D(0.5,0.0));
@@ -446,20 +417,15 @@ bool Feature::pointModelCheck(QyooMatrix *invTrans,float imgX,float imgY,float n
 	We'll run all the original points through the transform and make sure
      they're close to where we think they ought to be.
     There's a distance each point should be within and a fraction we expect
-     to be within that distnace.
+     to be within that distance.
  */
 bool Feature::modelCheck(float nearDist2,float nearFrac)
 {
 	if (!valid)
 		return false;
 
-#ifdef QYOO_CMD
-	QyooMatrix invMat = mat;
-	invMat.inverse();
-#else
-	CGAffineTransform invMat = CGAffineTransformInvert(mat);
-#endif
-	
+    CGAffineTransform invMat = CGAffineTransformInvert(mat);
+
 	// Work through the original points
 	int numClose = 0;
 	int total = 0;

@@ -13,16 +13,16 @@ let package = Package(
     targets: [
         .target(
             name: "QyooDetector",
-            dependencies: ["QyooLib"],
+            dependencies: ["Detector"],
             path: "Sources/QyooDetector",
             publicHeadersPath: "."
         ),
         .target(
-            name: "QyooLib",
-            path: "Sources/QyooLib",
+            name: "Detector",
+            path: "Sources/Detector",
             publicHeadersPath: ".",
             cxxSettings: [
-                .headerSearchPath("Sources/QyooLib"),
+                .headerSearchPath("Sources/Detector"),
                 .define("USE_OBJCXX", to: "1")
             ]
         ),
