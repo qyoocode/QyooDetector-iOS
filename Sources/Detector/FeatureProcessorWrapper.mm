@@ -6,7 +6,7 @@
 //
 
 #import "FeatureProcessorWrapper.h"
-#import "FeatureProcessor.h"
+#import "FeatureDetector.h"
 
 @implementation FeatureProcessorWrapper {
     FeatureProcessor *featureProcessor;
