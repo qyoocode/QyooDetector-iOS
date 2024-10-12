@@ -78,12 +78,6 @@ public:
      */
     inline unsigned char *getImgData() { return img; }
 
-    /**
-     * Copy data from a GD image into this grayscale image.
-     * @param inImage The source GD image.
-     */
-    void copyFromGDImage(gdImagePtr inImage);
-
     
     void renderFromImage(UIImage *inImage,BOOL flip,BOOL vertFlip);
     
