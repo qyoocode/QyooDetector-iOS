@@ -7,6 +7,7 @@
 
 #import "FeatureProcessorWrapper.h"
 #import "FeatureDetector.h"
+#import "RawImage.h"
 
 @implementation FeatureProcessorWrapper {
     FeatureProcessor *featureProcessor;
