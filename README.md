@@ -1,105 +1,116 @@
 # QyooDetector
 
-QyooDetector is a Swift package that provides image processing capabilities, particularly focused on handling grayscale images. The core functionality includes feature detection, image contrast adjustment, and transformation of images into grayscale. The package leverages Objective-C++ for performance, making it suitable for both modern Swift applications and legacy C++ systems.
+QyooDetector is a Swift Package for detecting production Qyoo carriers from
+decoded Apple image buffers. It wraps the portable C detector core and does not
+reimplement recognition in Swift.
 
-## Features
+Supported platforms:
 
-- Grayscale image processing for 8-bit and 32-bit images.
-- Conversion of `UIImage` objects to grayscale and feature detection.
-- Image contrast scaling for enhancing image clarity.
-- Ability to create indexed images using custom color masks.
+- iOS 15 or later, including iOS Simulator
+- macOS 13 or later
 
 ## Installation
 
-### Using Swift Package Manager
-
-To integrate **QyooDetector** into your project, you can add it as a dependency using Swift Package Manager.
-
-1. In your Xcode project, go to **File > Swift Packages > Add Package Dependency**.
-2. Enter the repository URL:
-   ```
-   https://github.com/yourusername/QyooDetector.git
-   ```
-3. Choose the latest version and add it to your target.
-
-Alternatively, you can add the package directly to your `Package.swift` file:
+Add `https://github.com/qyoocode/QyooDetector-iOS.git` as a Swift Package and
+link the `QyooDetector` library product. A package manifest can track `main`
+during development:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/qyoocode/QyooDetector-iOS", from: "1.0.0")
+    .package(
+        url: "https://github.com/qyoocode/QyooDetector-iOS.git",
+        branch: "main"
+    ),
 ]
 ```
 
-## Package Structure
-
-The package is divided into two main components:
-- **Detector**: Contains the Objective-C++ image processing code, which performs the core image manipulation functions.
-- **QyooDetector**: Swift-based interface that exposes the image processing functionality for use in Swift projects.
-
-### Key Classes and Methods
-
-#### `RawImageGray8`
-
-This class handles 8-bit grayscale image data.
-
-- **Initialization**:
-  ```objc
-  RawImageGray8 *image = [[RawImageGray8 alloc] initWithSizeX:100 sizeY:100];
-  ```
-  
-- **Render from `UIImage`**:
-  Converts a `UIImage` to a raw grayscale image:
-  ```objc
-  [image renderFromImage:uiImage flip:NO vertFlip:NO];
-  ```
-
-- **Image Contrast**:
-  Enhances the contrast of the grayscale image:
-  ```objc
-  [image runContrast];
-  ```
-
-- **Convert back to `UIImage`**:
-  Generates a `UIImage` from the raw grayscale data:
-  ```objc
-  UIImage *outputImage = [image makeImageWithCopy:YES];
-  ```
-
-#### `RawImageGray32`
-
-This class handles 32-bit grayscale image data.
-
-- **Initialization**:
-  ```objc
-  RawImageGray32 *image = [[RawImageGray32 alloc] initWithSizeX:100 sizeY:100];
-  ```
-
-- **Create a `UIImage`**:
-  ```objc
-  UIImage *outputImage = [image makeImageWithZeroAlpha:NO];
-  ```
-
 ## Usage
 
-Here’s an example of how you can use the package in a Swift-based iOS/macOS project:
-
 ```swift
-import Detector
+import QyooDetector
 
-class ImageProcessor {
-    func processImage(_ image: UIImage) -> UIImage? {
-        let rawImage = RawImageGray8(sizeX: Int(image.size.width), sizeY: Int(image.size.height))
-        rawImage.renderFromImage(image, flip: false, vertFlip: false)
-        rawImage.runContrast()
-        return rawImage.makeImageWithCopy(true)
-    }
+let detector = try QyooDetector()
+let results = try detector.detect(pixelBuffer: pixelBuffer)
+
+for result in results {
+    print(result.payload)                 // raw UInt64; low 36 bits are used
+    print(result.bounds)
+    print(result.carrierQuadrilateral as Any)
 }
 ```
 
-## Contributing
+`CVPixelBuffer` inputs support non-planar `kCVPixelFormatType_32BGRA` and
+`kCVPixelFormatType_OneComponent8`. Upright buffers use their existing base
+address and row stride directly; the wrapper does not copy their pixels.
 
-We welcome contributions to improve the QyooDetector package. If you would like to contribute, please open an issue or submit a pull request.
+`CGImage` is also supported without PNG/JPEG re-encoding:
 
-## License
+```swift
+let results = try detector.detect(cgImage: image, orientation: .right)
+```
 
-This project is licensed under the **BSD-3 Clause License**. See the `LICENSE` file for details.
+`CGImage` and `CVPixelBuffer` do not reliably carry display orientation inside
+the pixel object. Pass the corresponding `CGImagePropertyOrientation` when the
+stored pixels are not upright. The wrapper normalizes all eight orientations,
+including mirrored variants, before detection. Result bounds and quadrilateral
+points are measured in the normalized caller-visible image, with a top-left
+origin and pixel units. Left/right orientations swap the result image width and
+height.
+
+For already decoded data, `detect(bytes:width:height:bytesPerRow:pixelFormat:)`
+accepts GRAY8, RGB24, BGR24, RGBA32, or BGRA32 data with padded rows.
+
+A successful no-Qyoo decision returns an empty array. Native allocation,
+invalid-image, and processing failures throw `QyooDetectorError`. Each
+`QyooResult` contains the exact raw 36-bit payload in a `UInt64`, carrier bounds,
+an optional carrier quadrilateral, and the production normalization strategy.
+Historical decimal/row-column/boundary/frame codecs are intentionally absent.
+
+## Threading and lifetime
+
+`QyooDetector` is not main-actor isolated and may be called from background
+tasks or camera-frame processing. One instance owns one native detector context;
+the C core serializes concurrent calls on that instance. Independent detector
+instances may execute concurrently. There is no global detector context.
+
+Image storage is borrowed only for the synchronous call. Swift callers never
+handle native result allocations: the wrapper copies results into Swift value
+types and releases every C result array before returning or throwing.
+
+## Native core provenance
+
+The package source-vendors the public ABI and implementation from
+`qyoocode/QyooDetector-CPP` commit
+`3a7002fd7cc6075d9bfb19fe537585dc277a9267`. The C ABI in
+`qyoo_detector.h` is the integration boundary; C++ implementation types are not
+public. The exact libgd 2.3.3 resampler source required by the frozen multiscale
+policy is vendored without image-codec dependencies. See
+`Sources/CQyooDetectorCore/PROVENANCE.md` and `LICENSES/`.
+
+## Build, test, and example
+
+```sh
+swift build
+swift test
+swift run QyooDetectorExample /path/to/image.jpg
+```
+
+The example prints every payload and its geometry. It is a command-line sample,
+not a scanner or camera application.
+
+Apple SDK builds can be checked directly:
+
+```sh
+xcodebuild -scheme QyooDetector \
+  -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO
+
+xcodebuild -scheme QyooDetector \
+  -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO
+```
+
+For camera-path timing, the benchmark separates pixel-buffer lock/metadata
+cost, direct C runtime, and total Swift-call runtime:
+
+```sh
+swift run -c release QyooDetectorBenchmark /path/to/upright-image.jpg 10
+```
