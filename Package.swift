@@ -1,33 +1,42 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "QyooDetector",
+    platforms: [
+        .iOS(.v15),
+        .macOS(.v13),
+    ],
     products: [
-        .library(
-            name: "QyooDetector",
-            targets: ["QyooDetector"]),
+        .library(name: "QyooDetector", targets: ["QyooDetector"]),
+        .executable(name: "QyooDetectorExample", targets: ["QyooDetectorExample"]),
     ],
     targets: [
         .target(
-            name: "QyooDetector",
-            dependencies: ["Detector"],
-            path: "Sources/QyooDetector",
-            publicHeadersPath: "."
-        ),
-        .target(
-            name: "Detector",
-            path: "Sources/Detector",
-            publicHeadersPath: ".",
+            name: "CQyooDetectorCore",
+            path: "Sources/CQyooDetectorCore",
+            exclude: ["PROVENANCE.md"],
+            publicHeadersPath: "include",
+            cSettings: [
+                .headerSearchPath("libgd"),
+                .define("HAVE_CONFIG_H"),
+            ],
             cxxSettings: [
-                .headerSearchPath("Sources/Detector"),
-                .define("USE_OBJCXX", to: "1")
+                .headerSearchPath("."),
+                .headerSearchPath("core"),
+                .headerSearchPath("libgd"),
+                .define("HAVE_CONFIG_H"),
             ]
         ),
-        .testTarget(
-            name: "QyooDetectorTests",
-            dependencies: ["QyooDetector"]),
-    ]
+        .target(
+            name: "QyooDetector",
+            dependencies: ["CQyooDetectorCore"]
+        ),
+        .executableTarget(
+            name: "QyooDetectorExample",
+            dependencies: ["QyooDetector"]
+        ),
+    ],
+    cxxLanguageStandard: .cxx11
 )

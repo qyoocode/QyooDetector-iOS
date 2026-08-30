@@ -1,0 +1,5 @@
+.build/
+.codex-work/
+_remove_later/
+DerivedData/
+*.xcresult
