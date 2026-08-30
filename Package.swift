@@ -11,6 +11,7 @@ let package = Package(
     products: [
         .library(name: "QyooDetector", targets: ["QyooDetector"]),
         .executable(name: "QyooDetectorExample", targets: ["QyooDetectorExample"]),
+        .executable(name: "QyooDetectorBenchmark", targets: ["QyooDetectorBenchmark"]),
     ],
     targets: [
         .target(
@@ -36,6 +37,15 @@ let package = Package(
         .executableTarget(
             name: "QyooDetectorExample",
             dependencies: ["QyooDetector"]
+        ),
+        .executableTarget(
+            name: "QyooDetectorBenchmark",
+            dependencies: ["QyooDetector", "CQyooDetectorCore"]
+        ),
+        .testTarget(
+            name: "QyooDetectorTests",
+            dependencies: ["QyooDetector", "CQyooDetectorCore"],
+            resources: [.copy("Fixtures")]
         ),
     ],
     cxxLanguageStandard: .cxx11

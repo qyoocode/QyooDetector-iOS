@@ -1,0 +1,62 @@
+{
+  "schema": "org.qyoo.detector.apple-fixtures",
+  "core_commit": "3a7002fd7cc6075d9bfb19fe537585dc277a9267",
+  "fixtures": [
+    {
+      "file": "perfect.png",
+      "source_set": "task-01 frozen corpus",
+      "case": "rotation_0deg",
+      "expected_payload": 51178614380,
+      "sha256": "8157f7eff0fe86a44b76dc292e737c10fb62d646828cb34a857467e1ea5fc7a2"
+    },
+    {
+      "file": "rotation_30.png",
+      "source_set": "task-01 frozen corpus",
+      "case": "rotation_30deg",
+      "expected_payload": 51178614380,
+      "sha256": "99437c047fd3d5c2a4cc5769eba2a47d6f63301e0092f3d75f3162a9e133f1d2"
+    },
+    {
+      "file": "perspective_1.png",
+      "source_set": "task-01 frozen corpus",
+      "case": "perspective_1",
+      "expected_payload": 51178614380,
+      "sha256": "a8ef52ea9535af573c7739a5c4a422acada567dea802f2d8f0a5995cc45cc8a9"
+    },
+    {
+      "file": "single_bit_17.png",
+      "source_set": "task-07 payload-density corpus",
+      "case": "single_17 clean",
+      "expected_payload": 262144,
+      "sha256": "d4972aeecda0cd40102e653290f94e48c7ff9d2c93a4b75eb46fd83fcc800341"
+    },
+    {
+      "file": "all_zero.png",
+      "source_set": "task-02 canonical corpus",
+      "case": "expanded_raw_zero",
+      "expected_payload": 0,
+      "sha256": "061e5cd9d75c6f580e238bfb77f8e65e6955680f1ec1ea31ecc2b93f19ca927b"
+    },
+    {
+      "file": "screen_raw_zero.jpeg",
+      "source_set": "task-08 screen-development-54",
+      "case": "raw_zero screen_frontal_near",
+      "expected_payload": 0,
+      "sha256": "7649afd5ecda9bcab54b1ec17d14ec7ce2eb1c8754277809bdfa67c6c7211b74"
+    },
+    {
+      "file": "IMG_5172.jpg",
+      "source_set": "historical real-image holdout",
+      "case": "IMG_5172",
+      "expected_payload": 511305600,
+      "sha256": "c7610326734cf08f2fe348389dc25c7849cf31f56d4de26589b63c1a398e0002"
+    },
+    {
+      "file": "negative_gray.png",
+      "source_set": "task-01 frozen corpus",
+      "case": "negative_gray",
+      "expected_payload": null,
+      "sha256": "8a58d2b82b35a7a797e43c238493d57cb5532f5a303d712802f087d69f4ec9f0"
+    }
+  ]
+}
