@@ -81,7 +81,7 @@ types and releases every C result array before returning or throwing.
 
 The package source-vendors the public ABI and implementation from
 `qyoocode/QyooDetector-CPP` commit
-`3a7002fd7cc6075d9bfb19fe537585dc277a9267`. The C ABI in
+`5b23d087b702300d5d36e82ebda91dcca74728b1`. The C ABI in
 `qyoo_detector.h` is the integration boundary; C++ implementation types are not
 public. The exact libgd 2.3.3 resampler source required by the frozen multiscale
 policy is vendored without image-codec dependencies. See
