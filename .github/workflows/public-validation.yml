@@ -13,7 +13,7 @@ jobs:
         run: python3 scripts/verify_sources.py
       - name: Build and test package
         run: swift test
-      - name: Compile generic iOS Simulator target
-        run: xcodebuild -scheme QyooDetector -destination 'generic/platform=iOS Simulator' -derivedDataPath .build/apple-simulator build CODE_SIGNING_ALLOWED=NO
-      - name: Compile generic iOS device target
-        run: xcodebuild -scheme QyooDetector -destination 'generic/platform=iOS' -derivedDataPath .build/apple-device build CODE_SIGNING_ALLOWED=NO
+      - name: Compile unsigned iOS Simulator target
+        run: swift build --target QyooDetector --triple arm64-apple-ios15.0-simulator --sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)"
+      - name: Compile unsigned iOS device target
+        run: swift build --target QyooDetector --triple arm64-apple-ios15.0 --sdk "$(xcrun --sdk iphoneos --show-sdk-path)"

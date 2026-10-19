@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 
-CORE_COMMIT = "3a7002fd7cc6075d9bfb19fe537585dc277a9267"
+CORE_COMMIT = "60aa253c074e69922084a66fea67a73aa2c93531"
 ROOT = Path(__file__).resolve().parents[1]
 
 

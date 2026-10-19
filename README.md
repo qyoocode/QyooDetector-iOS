@@ -4,9 +4,10 @@ QyooDetector is a Swift Package for detecting 36-bit Qyoo carriers from
 decoded Apple image buffers. It wraps the portable C detector core and does not
 reimplement recognition in Swift.
 
-This package preserves the detector snapshot identified below. Current app
-integration may pin a later qualified revision; this snapshot does not by
-itself establish parity with the shipping Qyoo 4.0 scanner. It implements visual
+This package vendors the detector safety snapshot identified below. The
+release-associated app pin predates its stronger empty-payload guard; adopting
+this SDK requires an explicit app pin update and qualification. Exact approved
+binary identity has not been independently established. It implements visual
 detection, not URL routing, Manifest resolution, ID allocation, or AR rendering.
 See [AUDIT.md](AUDIT.md) for publication gates and validation limits.
 
@@ -19,13 +20,13 @@ Requires Swift tools 5.10 or later and Apple SDKs. Supported platforms:
 
 Add `https://github.com/qyoocode/QyooDetector-iOS.git` as a Swift Package and
 link the `QyooDetector` library product. For reproducible integration, pin a reviewed commit or release tag. This
-example pins the public snapshot inspected by the audit:
+example requires replacing the placeholder with the full reviewed SDK commit:
 
 ```swift
 dependencies: [
     .package(
         url: "https://github.com/qyoocode/QyooDetector-iOS.git",
-        revision: "021becc75bd35834007aeca7a2db0f6451e8692c"
+        revision: "<reviewed SDK commit>"
     ),
 ]
 ```
@@ -87,7 +88,7 @@ types and releases every C result array before returning or throwing.
 
 The package source-vendors the public ABI and implementation from
 `qyoocode/QyooDetector-CPP` commit
-`3a7002fd7cc6075d9bfb19fe537585dc277a9267`. The C ABI in
+`60aa253c074e69922084a66fea67a73aa2c93531`. The C ABI in
 `qyoo_detector.h` is the integration boundary; C++ implementation types are not
 public. The exact libgd 2.3.3 resampler source required by the frozen multiscale
 policy is vendored without image-codec dependencies. See
@@ -110,14 +111,13 @@ swift run QyooDetectorExample /path/to/image.jpg
 The example prints every payload and its geometry. It is a command-line sample,
 not a scanner or camera application.
 
-Apple SDK builds can be checked directly:
+Unsigned Apple SDK target compilation can be checked without booting a simulator:
 
 ```sh
-xcodebuild -scheme QyooDetector \
-  -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO
-
-xcodebuild -scheme QyooDetector \
-  -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO
+swift build --target QyooDetector --triple arm64-apple-ios15.0 \
+  --sdk "$(xcrun --sdk iphoneos --show-sdk-path)"
+swift build --target QyooDetector --triple arm64-apple-ios15.0-simulator \
+  --sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)"
 ```
 
 For camera-path timing, the benchmark separates pixel-buffer lock/metadata
@@ -134,8 +134,8 @@ are detector regression oracles; they do not independently establish the
 photographed ID. The suite is not a camera reliability benchmark. Record
 accepted-wrong IDs separately from rejection in any additional camera corpus.
 
-The checked-in workflow runs macOS package tests and generic unsigned Apple
-SDK builds. Device signing and physical iPhone camera validation require a
+The checked-in workflow runs macOS package tests and unsigned Apple
+SDK target compilation. Device signing and physical iPhone camera validation require a
 separate supported environment. See [AUDIT.md](AUDIT.md) for what was actually
 run during this audit.
 
@@ -151,3 +151,11 @@ EXIF block from `screen_raw_zero.jpeg` without changing its compressed image
 scan; the fixture manifest records the updated digest. This working-tree
 correction does not remove the original metadata from Git history. See
 [AUDIT.md](AUDIT.md) for the owner follow-up.
+
+The safety update rejects an empty-grid claim when existing high-contrast
+foreground contradicts it in either the template grid or final sample disks.
+The numeric domain still includes zero; this is a conservative acceptance rule,
+not a new payload codec. In native qualification five C-generated genuine zero
+symbols at64/68/96/128/256px change from acceptance to rejection; the frozen
+Apple zero fixtures remain accepted. See [AUDIT.md](AUDIT.md) for measured corpus
+limits and the separate current-app pin/released-binary qualification gates.

@@ -1,6 +1,6 @@
 {
   "schema": "org.qyoo.detector.apple-fixtures",
-  "core_commit": "3a7002fd7cc6075d9bfb19fe537585dc277a9267",
+  "core_commit": "60aa253c074e69922084a66fea67a73aa2c93531",
   "fixtures": [
     {
       "file": "perfect.png",
@@ -58,6 +58,37 @@
       "case": "negative_gray",
       "expected_payload": null,
       "sha256": "8a58d2b82b35a7a797e43c238493d57cb5532f5a303d712802f087d69f4ec9f0"
+    },
+    {
+      "file": "c-max64.png",
+      "sha256": "22939d463bded4b288fdc95d1dc67243593ea83522f12999f7bde431f4860f19",
+      "expected_payload": 68719476735,
+      "acceptable_result": "exact payload or rejection; an accepted different payload is a release blocker",
+      "source_set": "C generator known-answer release safety",
+      "case": "c-max64.png",
+      "expected_policy": "exact payload or rejection; accepted different ID fails"
+    },
+    {
+      "file": "c-one128.png",
+      "sha256": "b255ef7ac5363f5f3961633b46d00ef1ddbb4c1ec7ff8b05493ddacc56ac7aa9",
+      "expected_payload": 1,
+      "generation_command": "bin/qyoo -id 1 -w 128 -h 128 -o c-one128.png",
+      "acceptable_result": "exact payload or rejection; accepted different ID is a release blocker",
+      "source_note": "same historical generator geometry; shape/payload generation source unchanged by subsequent input-dimension safety fix",
+      "source_set": "C generator known-answer release safety",
+      "case": "c-one128.png",
+      "expected_policy": "exact payload or rejection; accepted different ID fails"
+    },
+    {
+      "file": "c-one96.png",
+      "sha256": "6027faeaf3fdf033d4cc8fceee6804214c0c1e3428c720fd1251fb11bf2c441b",
+      "expected_payload": 1,
+      "generation_command": "bin/qyoo -id 1 -w 96 -h 96 -o c-one96.png",
+      "acceptable_result": "exact payload or rejection; accepted different ID is a release blocker",
+      "source_note": "higher-resolution template sees sparse foreground discarded by final nearest-neighbor normalization",
+      "source_set": "C generator known-answer release safety",
+      "case": "c-one96.png",
+      "expected_policy": "exact payload or rejection; accepted different ID fails"
     }
   ]
 }

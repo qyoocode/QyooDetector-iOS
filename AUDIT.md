@@ -2,29 +2,30 @@
 
 Inspected default branch `origin/main`:
 `021becc75bd35834007aeca7a2db0f6451e8692c`.
-Classification: **reference Swift SDK snapshot; current-app parity unqualified**.
+Classification: **Swift SDK safety update; app adoption and shipping-binary parity pending**.
 Verdict: **HOLD for a newly endorsed Qyoo 4.0 SDK release**. The integration
-surface is coherent, but current-app safety alignment, fresh Apple builds and
-privacy/asset follow-up remain release gates. Native and Swift executable source
-was preserved byte for byte.
+surface is coherent; macOS tests and unsigned Apple SDK target compilation are
+now recorded below. App adoption, exact released-binary linkage, physical camera
+qualification and privacy/asset follow-up remain gates. Only the two native
+FeatureDetector files changed; Swift executable source and C ABI are unchanged.
 
 ## Findings
 
 | Severity | Finding and evidence | Status |
 | --- | --- | --- |
 | HIGH | [`Tests/QyooDetectorTests/Fixtures/screen_raw_zero.jpeg`](Tests/QyooDetectorTests/Fixtures/screen_raw_zero.jpeg) at inspected main contained EXIF GPS coordinate fields with nonempty latitude/longitude rationals, device metadata and capture time. Values were never printed. | Current-file EXIF removed losslessly; compressed JPEG scan bytes unchanged, manifest hash updated, integrity guard added. Original still exists in Git history. Owner must assess privacy notification/history remediation separately; no rewrite is authorized. |
-| HIGH | The read-only current-app source comparison found its detector pin is later than this public snapshot and includes additional empty-payload safety rejection. This snapshot's [`QyooDetectorTests.swift:12`](Tests/QyooDetectorTests/QyooDetectorTests.swift#L12) still explicitly expects zero acceptance. | Open alignment/qualification decision. No native behavior copied from private development. Numeric 36-bit range and detector acceptance policy must be treated separately. |
-| HIGH | The source-equivalent C++ public core accepted a known generated 64×64 maximum-ID PNG as 0 during this audit. | Current Swift CGImage/CVPixelBuffer path NOT RUN; do not infer an Apple-path result, but shared-source safety qualification is a release gate. Public C++ release-safety fixture/gate retains the exact reproduction. |
+| HIGH | The read-only current-app source comparison found its detector pin is later than this public snapshot and includes additional empty-payload safety rejection. The later app pin still accepts sparse generated ID1 symbols as0 in the source-equivalent native probe. | Public SDK now vendors qualified public core60aa253; app pin migration remains a separate review. Genuine zero remains in the numeric domain. Numeric 36-bit range and detector acceptance policy must be treated separately. |
+| HIGH | The source-equivalent C++ public core accepted a known generated 64×64 maximum-ID PNG as 0 during this audit. | Reproduced RED in Apple API/raw-buffer tests and repaired by qualified public core60aa253. All33 new Apple safety calls pass; actual camera and exact released binary remain unqualified. Public C++ release-safety fixture/gate retains the exact reproduction. |
 | HIGH | Camera photograph redistribution rights are not established by repository documentation. | Owner/legal confirmation required. Existing photos retained, except privacy metadata removal. |
 | MEDIUM | CML license was missing from the license bundle despite redistribution of 301 headers; [`cml/version.h:2`](Sources/CQyooDetectorCore/cml/version.h#L2) retains upstream placeholder text. | Complete upstream Boost 1.0 license restored; exact source fingerprint and scope documented without invented copyright or source rewriting. |
-| MEDIUM | Build, device/simulator and orientation claims had no fresh audit-run results. | Explicit NOT RUN gates; macOS test and unsigned Apple compilation CI prepared, not represented as passing. |
+| MEDIUM | Initial audit lacked fresh Apple results. | Follow-up: macOS build/11tests PASS; unsigned iOS device/simulator target compilation results below. No device or simulator runtime qualification. |
 | LOW | Installation example tracked mutable main and provenance used internal task language. | Example pins inspected public commit; provenance now describes a source snapshot, not an internal task. |
 
 ## Native provenance and application comparison
 
 `python3 scripts/verify_sources.py --cpp ../QyooDetector-CPP` verified all
 322 source files against C++ commit
-`3a7002fd7cc6075d9bfb19fe537585dc277a9267`: one public C header,
+`60aa253c074e69922084a66fea67a73aa2c93531`: one public C header,
 20 native source/header files, 301 CML headers. The only native textual
 exception is the documented Clang diagnostic scope in `QyooModel.cpp`.
 All CML headers also match upstream CML
@@ -79,10 +80,10 @@ provenance were retained. No sensitive coordinate/time values were output.
 Pinned-install documentation; current-app parity caveat; concise provenance;
 CML license restoration and dependency/asset notices; 8-fixture hash/range/EXIF
 checks; complete native snapshot verification script; macOS/Apple CI workflow;
-lossless EXIF removal and updated manifest digest. No decoder/wrapper ABI or
-geometry change. Git history preserves the original photograph bytes.
+lossless EXIF removal and updated manifest digest. Follow-up adds the qualified contradictory-empty native rejection and three
+C-generator known-answer fixtures/tests. No wrapper/C ABI or geometry change. Git history preserves the original photograph bytes.
 
-## Verification
+## Initial audit verification (before safety continuation)
 
 Commands below run from the repository root unless noted.
 
@@ -128,3 +129,118 @@ vulnerability from this advisory was not established. System libgd users should
 apply their distributor's security updates; version `2.3.3` alone does not
 identify the distributor patch level. This scoped check is not a blanket
 security clearance for libgd or all transitive codecs.
+
+
+## Shipping-impact follow-up: source identity versus binary proof
+
+FACT: source `b8e13f4b3ca40320ea3c6f4c9e8bc1da2345b87a` is the retained
+uploaded/selected 4.0/build 2 baseline. Both its committed `Package.swift` and
+Xcode `Package.resolved` pin detector
+`a1c3c6d203b503765243428f4fad163babcb79d9`. Retained
+`Qyoo-iOS/.codex-work/phase3a/Qyoo-iOS/.codex-work/final-build-2/archive.log`
+line 8 resolves that detector revision and line 405 records compiling its
+`FeatureDetector.cpp`; `release-build.log` line 11 confirms the same resolution.
+The report records archive/export/validation/upload success and selected build 2,
+but explicitly predates submission. Its former archive path
+`/tmp/Qyoo-AppStore-4.0.2/` and recorded DerivedData package checkout are no
+longer present at inspection. No extant archive hash/binary-to-App-Store linkage
+was established. Owner-reported approval does not identify the exact released
+binary. Do not label the source baseline as the exact approved binary.
+
+FACT: public `021becc75bd35834007aeca7a2db0f6451e8692c` versus a1c3c6d has
+exactly two executable native file differences: `core/FeatureDetector.cpp` and
+`.h`; the only other `Sources` difference is provenance text. The later code
+counts sampled foreground pixels and rejects an all-zero grid **only for
+NormalizationCarrierTemplate** when aggregate support reaches one dot's minimum
+threshold. It clears candidate bits and reports
+`carrier_template_empty_payload_rejected`; it does not blanket-reject payload
+zero or alter a decoded bit. This specifically addresses contradictory
+foreground evidence in that normalization path. It does not by inspection prove
+that the separate C-generated 64px maximum-ID incident is rejected.
+
+FACT: Phase3a and active experience-bridge iOS worktree HEADs both read b8e13f4;
+respectively 2 and 61 status entries existed at inspection. Neither worktree was
+modified. Both retain the a1c3c6d app pin. The app-facing
+`Sources/QyooScannerCore/QyooDetectionEngine.swift` calls pixel-buffer detection
+and maps returned results; it does not add an ID-zero filter. `ScannerResult`
+copies the payload without reinterpretation. Native safety therefore matters to
+current app source. No actual Apple pixel-buffer or shipping-binary result for
+the C64 fixture is established by these source comparisons. Public SDK tests
+remain unchanged during this follow-up; no build/test/simulator/device was run.
+
+**Superseding measured source-impact result:** the continuation's first repaired
+public native probe exactly reproduced `FeatureDetector.cpp` and `.h` from
+app-pinned a1c3c6d (SHA-256 respectively
+`eebe73ce4e51e165f089f4f126771bc1c55e1931beb15f175c6f98b21affdac9` and
+`a3d7f8761ac99b9914f225375a5388c31fd4158077f2d97f0239a5771be94090`).
+The repair came from native source commit
+`5b23d087b702300d5d36e82ebda91dcca74728b1`. The 42-case C-generated scale
+probe yielded **18 correct, 4 accepted-wrong, 20 rejected, 0 processing errors**.
+Maximum-ID64px was safely rejected, but payload1 at64/68/96/128px was accepted
+as0: aggregate foreground remained below the one-dot threshold. Exact case
+outcomes and source-equality evidence are retained in workspace
+`.codex-work/public-repo-audit/continuation-evidence.json`, fields
+`first_repair_scale_probe` and `app_core_repair_equality`.
+
+FACT: this demonstrates a remaining false-empty defect in the native source
+used by the release-associated app pin, in a native harness; it supersedes any
+inference that the later safety guard fully addresses the newly probed class.
+It is not a reproduction through CGImage/CVPixelBuffer or the exact approved
+binary. Exact approved-binary linkage remains unknown. Native-source safety and
+Apple-path qualification are separate, open release gates.
+
+FACT: the strengthened public core is now vendored from
+`60aa253c074e69922084a66fea67a73aa2c93531`. Foreground under the existing
+radiance/contrast predicate contradicts a claimed empty grid in either the
+higher-resolution template-grid envelope or final sampler. The rejection changes
+no decoded bits and reserves no ID. Parent's179-case native qualification reports
+136correct,42rejected,1true-negative,0accepted-wrong,0errors. Five genuine C-zero
+cases at64/68/96/128/256px now reject; all7 frozen Apple positives retain results.
+These bounded corpus measurements do not establish general camera accuracy.
+No private app source or pin was changed by this follow-up.
+
+Read-only dependency recheck: GitHub upstream CML tree
+`0bb27c8637dd9cdc92b2f376a9e8c08eb649920f` was non-truncated; all 301 local
+headers have identical Git blob hashes, and upstream LICENSE is byte-identical
+to `LICENSES/CML-Boost-1.0.txt`. Upstream README names Boost. This supports
+attribution/license restoration while leaving historical import-chain uncertainty
+explicit. The original C generator SVG helper has no file-level attribution;
+its reachable path history begins at `7d269bd` (initial import). That is not
+proof of authorship or a third-party grant. Owner confirmation remains open.
+
+Exact historical metadata object/ref scope and non-executed owner options are
+in [PRIVACY_REMEDIATION.md](PRIVACY_REMEDIATION.md). No metadata values were
+printed, no private/source project was edited and no refs were rewritten.
+
+
+## Safety continuation: fresh Apple verification
+
+Run from this isolated SDK worktree; logs are retained in ignored `.codex-work/`.
+
+| Command | Actual result |
+| --- | --- |
+| `python3 scripts/verify_sources.py --cpp ../QyooDetector-CPP` | PASS:11fixture hashes/ranges and322native/header files match60aa253; only historical QyooModel Clang diagnostic scope excepted. |
+| `swift test --jobs 2 --filter ReleaseSafetyTests` before vendoring | RED:2tests,33accepted-wrong assertions,0unexpected errors; raw BGRA/GRAY, CGImage and all8CVPixelBuffer orientations reproduced false0 for3known-answer fixtures. |
+| `swift build --jobs 2` after vendoring | PASS. |
+| `swift test --jobs 2` after vendoring | PASS:11tests,0failures in75.9s; includes7frozen positives/1negative CAPI-vsSwift regression, orientation/lifecycle and33safety calls requiring exact payload or rejection. |
+| Initial `xcodebuild -list -json` package-root probe | FAIL exit66: directory does not contain an Xcode project/workspace/package recognized by this CLI. Sandbox CoreSimulator connection warnings also occurred. No simulator booted. |
+| `swift build --jobs 2 --target QyooDetector --triple arm64-apple-ios15.0 --sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk` | PASS:unsigned device library target compilation,4.57s. |
+| `swift build --jobs 2 --target QyooDetector --triple arm64-apple-ios15.0-simulator --sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk` | PASS:unsigned Simulator library target compilation,4.53s; no runtime boot. |
+
+README and CI now use the working SwiftPM cross-compilation commands with the
+installed SDK path from xcrun. This proves library target compilation, not a
+signed/linked consumer app or physical-camera qualification. New CI remains
+unpublished/unrun remotely. Swift production source/orientation logic is unchanged.
+The new tests retain independent C-generator ID oracles; processing errors throw
+and cannot be counted as safe rejection. Zero accepted-wrong across33safety calls
+is distinct from detection-rate claims. The original app and released binary
+were not changed/tested by this SDK work.
+
+Storage: start22,874,615,808B available; after macOS suite22,604,566,528B;
+after device compilation22,551,367,680B; after Simulator compilation22,499,131,392B
+(the actual final reading is in `.codex-work/apple-results.json`). One reusable
+`.build/` is roughly367MB, scratch logs/results under40KB. Volume decline about
+375MB is not attributed solely to this work. Both SDK architectures reuse the
+same SwiftPM scratch root; no DerivedData/project/dependency copy was created.
+All build/log evidence retained for review; no cleanup or space reclamation.
+The volume remains above20GiB. No simulator/device/signing/production action.

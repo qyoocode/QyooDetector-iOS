@@ -5,10 +5,15 @@ and the CML headers in `cml/` are a vendored snapshot of
 [`qyoocode/QyooDetector-CPP`](https://github.com/qyoocode/QyooDetector-CPP) at:
 
 ```text
-3a7002fd7cc6075d9bfb19fe537585dc277a9267
+60aa253c074e69922084a66fea67a73aa2c93531
 ```
 
-This snapshot defines the packaged detector baseline. `main.cpp`, `ImageLoader`,
+This snapshot defines the packaged detector baseline. It includes the
+contradictory-empty-payload rejection qualified in the C++ release-safety
+corpus: both higher-resolution template-grid foreground and final sampler
+foreground invalidate an affirmative empty payload. It changes no decoded bit,
+public C ABI, Swift orientation adapter, or symbol geometry. The earlier app
+pin a1c3c6d contains only the less complete one-dot aggregate guard. `main.cpp`, `ImageLoader`,
 tests, and CLI-only build files are intentionally excluded. Swift calls only
 the public C ABI declared by `include/qyoo_detector.h`; no C++ implementation
 header is public. The sole source-level Apple patch is a Clang diagnostic scope
