@@ -42,7 +42,8 @@
       "source_set": "task-08 screen-development-54",
       "case": "raw_zero screen_frontal_near",
       "expected_payload": 0,
-      "sha256": "7649afd5ecda9bcab54b1ec17d14ec7ce2eb1c8754277809bdfa67c6c7211b74"
+      "sha256": "c4ee87c0a26dc02c06e4b756579b92b78b904380d10ece8dc92e380844d2266f",
+      "metadata_note": "EXIF removed for privacy during public audit; compressed JPEG image scan unchanged."
     },
     {
       "file": "IMG_5172.jpg",

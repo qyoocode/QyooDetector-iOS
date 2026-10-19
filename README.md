@@ -1,10 +1,16 @@
 # QyooDetector
 
-QyooDetector is a Swift Package for detecting production Qyoo carriers from
+QyooDetector is a Swift Package for detecting 36-bit Qyoo carriers from
 decoded Apple image buffers. It wraps the portable C detector core and does not
 reimplement recognition in Swift.
 
-Supported platforms:
+This package preserves the detector snapshot identified below. Current app
+integration may pin a later qualified revision; this snapshot does not by
+itself establish parity with the shipping Qyoo 4.0 scanner. It implements visual
+detection, not URL routing, Manifest resolution, ID allocation, or AR rendering.
+See [AUDIT.md](AUDIT.md) for publication gates and validation limits.
+
+Requires Swift tools 5.10 or later and Apple SDKs. Supported platforms:
 
 - iOS 15 or later, including iOS Simulator
 - macOS 13 or later
@@ -12,14 +18,14 @@ Supported platforms:
 ## Installation
 
 Add `https://github.com/qyoocode/QyooDetector-iOS.git` as a Swift Package and
-link the `QyooDetector` library product. A package manifest can track `main`
-during development:
+link the `QyooDetector` library product. For reproducible integration, pin a reviewed commit or release tag. This
+example pins the public snapshot inspected by the audit:
 
 ```swift
 dependencies: [
     .package(
         url: "https://github.com/qyoocode/QyooDetector-iOS.git",
-        branch: "main"
+        revision: "021becc75bd35834007aeca7a2db0f6451e8692c"
     ),
 ]
 ```
@@ -87,9 +93,15 @@ public. The exact libgd 2.3.3 resampler source required by the frozen multiscale
 policy is vendored without image-codec dependencies. See
 `Sources/CQyooDetectorCore/PROVENANCE.md` and `LICENSES/`.
 
+The repository's Qyoo code is BSD-3-Clause; CML and libgd have separate
+licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Include applicable
+notices in app distributions. Historical photograph redistribution rights
+remain an owner-review gate.
+
 ## Build, test, and example
 
 ```sh
+python3 scripts/verify_sources.py
 swift build
 swift test
 swift run QyooDetectorExample /path/to/image.jpg
@@ -114,3 +126,28 @@ cost, direct C runtime, and total Swift-call runtime:
 ```sh
 swift run -c release QyooDetectorBenchmark /path/to/upright-image.jpg 10
 ```
+
+
+Tests cover fixture regression output, pixel formats, orientation transforms,
+result lifetimes, and concurrent contexts. Historical-photo expected values
+are detector regression oracles; they do not independently establish the
+photographed ID. The suite is not a camera reliability benchmark. Record
+accepted-wrong IDs separately from rejection in any additional camera corpus.
+
+The checked-in workflow runs macOS package tests and generic unsigned Apple
+SDK builds. Device signing and physical iPhone camera validation require a
+separate supported environment. See [AUDIT.md](AUDIT.md) for what was actually
+run during this audit.
+
+With a local C++ checkout containing the documented commit, verify every
+vendored header and implementation file without compiling:
+
+```sh
+python3 scripts/verify_sources.py --cpp ../QyooDetector-CPP
+```
+
+Camera fixtures are distributed without EXIF metadata. The audit removed an
+EXIF block from `screen_raw_zero.jpeg` without changing its compressed image
+scan; the fixture manifest records the updated digest. This working-tree
+correction does not remove the original metadata from Git history. See
+[AUDIT.md](AUDIT.md) for the owner follow-up.
