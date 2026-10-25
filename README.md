@@ -1,5 +1,7 @@
 # QyooDetector
 
+Qyoo is maintained by **Pushplay LLC**.
+
 QyooDetector is a Swift Package for detecting 36-bit Qyoo carriers from
 decoded Apple image buffers. It wraps the portable C detector core and does not
 reimplement recognition in Swift.
@@ -96,8 +98,11 @@ policy is vendored without image-codec dependencies. See
 
 The repository's Qyoo code is BSD-3-Clause; CML and libgd have separate
 licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Include applicable
-notices in app distributions. Historical photograph redistribution rights
-remain an owner-review gate.
+notices in app distributions. Historical fixture photographs are regression
+evidence; their presence does not grant rights to unrelated photographs.
+
+**Status: reference Swift package.** Package tests establish the documented
+API/regression behavior; they do not establish production camera reliability.
 
 ## Build, test, and example
 
@@ -150,7 +155,8 @@ Camera fixtures are distributed without EXIF metadata. The audit removed an
 EXIF block from `screen_raw_zero.jpeg` without changing its compressed image
 scan; the fixture manifest records the updated digest. This working-tree
 correction does not remove the original metadata from Git history. See
-[AUDIT.md](AUDIT.md) for the owner follow-up.
+[PRIVACY_REMEDIATION.md](PRIVACY_REMEDIATION.md) for historical exposure; no history
+rewrite is part of this cleanup.
 
 The safety update rejects an empty-grid claim when existing high-contrast
 foreground contradicts it in either the template grid or final sample disks.
@@ -158,4 +164,5 @@ The numeric domain still includes zero; this is a conservative acceptance rule,
 not a new payload codec. In native qualification five C-generated genuine zero
 symbols at64/68/96/128/256px change from acceptance to rejection; the frozen
 Apple zero fixtures remain accepted. See [AUDIT.md](AUDIT.md) for measured corpus
-limits and the separate current-app pin/released-binary qualification gates.
+limits. This is a reference package; app adoption and production camera support
+are separately qualified and are outside this cleanup.
