@@ -5,10 +5,15 @@ and the CML headers in `cml/` are a vendored snapshot of
 [`qyoocode/QyooDetector-CPP`](https://github.com/qyoocode/QyooDetector-CPP) at:
 
 ```text
-3a7002fd7cc6075d9bfb19fe537585dc277a9267
+60aa253c074e69922084a66fea67a73aa2c93531
 ```
 
-That is the qualified Task 10 production boundary. `main.cpp`, `ImageLoader`,
+This snapshot defines the packaged detector baseline. It includes the
+contradictory-empty-payload rejection qualified in the C++ release-safety
+corpus: both higher-resolution template-grid foreground and final sampler
+foreground invalidate an affirmative empty payload. It changes no decoded bit,
+public C ABI, Swift orientation adapter, or symbol geometry. The earlier app
+pin a1c3c6d contains only the less complete one-dot aggregate guard. `main.cpp`, `ImageLoader`,
 tests, and CLI-only build files are intentionally excluded. Swift calls only
 the public C ABI declared by `include/qyoo_detector.h`; no C++ implementation
 header is public. The sole source-level Apple patch is a Clang diagnostic scope
@@ -34,3 +39,9 @@ The vendored libgd files contain Clang diagnostic scopes for libgd 2.3.3's
 historical narrowing-conversion warnings. These pragmas affect diagnostics only.
 
 Licenses for both vendored projects are in `LICENSES/` at the repository root.
+
+
+CML's 301 vendored files also match upstream commit
+`0bb27c8637dd9cdc92b2f376a9e8c08eb649920f` byte for byte. See
+[`THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md) for license scope,
+upstream placeholder handling, and asset-rights limitations.

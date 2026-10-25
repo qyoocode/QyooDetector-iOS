@@ -1,0 +1,19 @@
+name: Public validation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify fixture integrity
+        run: python3 scripts/verify_sources.py
+      - name: Build and test package
+        run: swift test
+      - name: Compile unsigned iOS Simulator target
+        run: swift build --target QyooDetector --triple arm64-apple-ios15.0-simulator --sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)"
+      - name: Compile unsigned iOS device target
+        run: swift build --target QyooDetector --triple arm64-apple-ios15.0 --sdk "$(xcrun --sdk iphoneos --show-sdk-path)"
